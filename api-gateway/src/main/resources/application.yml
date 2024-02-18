@@ -1,0 +1,63 @@
+server:
+  port: 8081
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+  application:
+    name: api-gateway
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            exposedHeaders: "*"
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          gateway:
+#            provider: keycloak
+#            client-id: Smart-Exam-Monitoring
+#            client-secret: zp7sYXNwu4UK4AceoVqMNQgz3YxHeNHr
+#            authorization-grant-type: authorization_code
+#            redirect-uri: "http://localhost:8084/login/oauth2/code/{registrationId}"
+#            scope: openid
+#            use-pkce: true
+#        provider:
+#          keycloak:
+#            issuer-uri: http://localhost:8080/realms/Smart-Exam-Monitoring
+#            user-name-attribute: preferred_username
+#  cloud:
+#    gateway:
+#      default-filters:
+#        - TokenRelay
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Audio Processing Service
+        url: /v3/api-docs/audio-processing-service
+      - name: Auth Service
+        url: /v3/api-docs/auth-service
+      - name: Exam Service
+        url: /v3/api-docs/exam-service
+      - name: Payment Service
+        url: /v3/api-docs/payment-service
+
+services:
+  uri:
+    audio-processing-service: lb://audio-processing-service/
+    exam-service: lb://exam-service/
+    payment-service: lb://payment-service/
+    auth-service: lb://auth-service/
+    test-service-url: lb://test-service/

@@ -1,0 +1,22 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}/eureka
+
+services:
+  uri:
+    eureka-server: ${EUREKA_SERVER_URL}
+
+app:
+  api-version: 1
+  base-url: 'http://${HOST_NAME}:${BACKEND_PORT}'
+  jwt:
+    secrete: ${JWT_TOKEN_SECRETE}
+    expiration-minutes:
+      access-token: ${ACCESS_TOKEN_EXPIRATION_MINUTES:30}
+      refresh-token: ${REFRESH_TOKEN_EXPIRATION_MINUTES:60}
