@@ -1,92 +1,102 @@
-# GOH
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+```                                                                                                                                                   
+ ,---.                            ,--.   ,------.                            ,--.   ,--.               ,--.  ,--.                ,--.                
+'   .-',--,--,--. ,--,--.,--.--.,-'  '-. |  .---',--.  ,--.,--,--.,--,--,--. |   `.'   | ,---. ,--,--, `--',-'  '-. ,---. ,--.--.`--',--,--,  ,---.  
+`.  `-.|        |' ,-.  ||  .--''-.  .-' |  `--,  \  `'  /' ,-.  ||        | |  |'.'|  || .-. ||      \,--.'-.  .-'| .-. ||  .--',--.|      \| .-. | 
+.-'    |  |  |  |\ '-'  ||  |     |  |   |  `---. /  /.  \\ '-'  ||  |  |  | |  |   |  |' '-' '|  ||  ||  |  |  |  ' '-' '|  |   |  ||  ||  |' '-' ' 
+`-----'`--`--`--' `--`--'`--'     `--'   `------''--'  '--'`--`--'`--`--`--' `--'   `--' `---' `--''--'`--'  `--'   `---' `--'   `--'`--''--'.`-  /  
+                                                                                                                                             `---' 
 ```
-cd existing_repo
-git remote add origin http://git.gebeya.training/goh-exam-monitoring-system1/goh.git
-git branch -M main
-git push -uf origin main
-```
+[![BUILD](https://github.com/senpare/smart-exam-monitoring/actions/workflows/maven.yml/badge.svg)](https://github.com/senpare/smart-exam-monitoring/actions/workflows/maven.yml/) [![BUILD](https://github.com/senpare/todo-microservices/actions/workflows/docker.yml/badge.svg)](https://github.com/senpare/todo-microservices/actions/workflows/docker.yml/) 
 
-## Integrate with your tools
 
-- [ ] [Set up project integrations](http://git.gebeya.training/goh-exam-monitoring-system1/goh/-/settings/integrations)
+## Requirement
+1. You need to have Docker installed on your machine.
+2. Clone this repo. Because this is a private repo, you will be prompted to enter your username and password ([Use your token as a password](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)).
+    ```bash
+   git clone https://github.com/senpare/Smart-Exam-Monitoring
+   ```
+# Setup
 
-## Collaborate with your team
+There two main steps to setup Smart-Exam-Monitoring web application
+1. Start Keycloak authorization server
+   1. ~~Go to keycloack directory~~ (**This steps is no longer required as keycloak is now moved to the main docker-compose.yml file**)
+       ```bash
+        cd {your-path}/Smart-Exam-Monitoring/keycloak
+       ```
+   2. ~~Start authorization server using docker command~~
+       ```bash
+        docker-compose up
+       ```
+   3. Keycloak server will start running http://localhost:8080/
+   4. You can use the below credentials to access the admin console
+      1. `Username`: admin@admin.com
+      2. `Password`: admin
+2. Start the main web application
+   1. Go to root directory of the project
+       ```bash
+       cd {your-path}/Smart-Exam-Monitoring
+       ```
+   2. Run all services with a single command
+      ```bash
+       docker-compose up
+      ```
+   3. The api-gateway will start running at http://localhost:8081/ (**Note: the port for the api gateway may change so make sure to consult this readme file time to time)
+     
+# Developer Guide
+  - Underlying services can not be accessed directly. All api calls to downstream services are proxied through the api-gateway.
+  - Use `api/v1/{service-name}/{entity}` pattern e.g. `api/v1/user-service/users` to fetch all users from the api (**Note this is just an example URL).
+  - You can check running services by going to http://localhost:8081/eureka/web url.
+  - If you make any pull request, make sure the CI successfully  passes (check the [Actions](https://github.com/senpare/Smart-Exam-Monitoring/actions) tab).
+  - If you make any changes to `docker-compose.yml` file or any of `Dockerfile`, you have to make sure `docker.yml` workflow passes. You can trigger this workflow manually by clicking the `Run workflow` button on the [Actions](https://github.com/senpare/Todo-Microservices/actions) tab.
+  - After pulling changes from the remote repo, you will need to run `docker-compose up --build` to rebuild the images.
+  - You can access pgAdmin (similar to MySQL workbench but for Postgres) using http://localhost:5050/
+  - You can access [maildev](https://github.com/maildev/maildev) (a local SMTP server) using http://localhost:1080/. You will need to get confirmation code after registering users.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+# Addresses
+## API documentations
+| Service                  | Local Address                         | Cloud Address                             |
+|--------------------------|---------------------------------------|-------------------------------------------|
+| api-gateway              | http://localhost:8081/swagger-ui.html | http://137.184.30.19:8081/swagger-ui.html |
+| auth-service             | http://localhost:8080/swagger-ui.html | http://137.184.30.19:8080/swagger-ui.html |
+| audio-processing-service | http://localhost:8082/swagger-ui.html | http://137.184.30.19:8082/swagger-ui.html |
+| email-service            | http://localhost:8083/swagger-ui.htm  |                                           |
+| exam-service             | http://localhost:8084/swagger-ui.html | http://137.184.30.19:8084/swagger-ui.html |
+| payment-service          | http://localhost:8085/swagger-ui.html | http://137.184.30.19:8085/swagger-ui.html |
+| test-service             | http://localhost:8086/swagger-ui.html |                                           |
+| React app                | http://localhost:3030                 | http://137.184.30.19:3030      
 
-## Test and Deploy
+## Tools
 
-Use the built-in continuous integration in GitLab.
+| Service                  | Address                               |
+|--------------------------|---------------------------------------|
+| api-gateway              | http://localhost:8081                 |
+| eureka-server            | http://localhost:8761                 |
+| keycloak                 | http://localhost:8080                 |
+| frontend                 | http://localhost:3030                 |
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+* **Note**: Requests to underlying services are proxied through the api-gateway.So, all requests should be made to the api-gateway. e.g. `http://localhost:8081/api/v1/payment-service/payments`
 
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+# Troubleshoot
+1. After updating your branch, you have to rebuild each image so that docker will pick up new changes   
+   ```bash
+   docker compose up --build
+   ```
+2. Databases created automatically if no database exist at the start of the postgres container.
+   If a new service is added, you have to clear your postgres volume so that docker will create all the database from scratch
+   1. Remove `postgres` container 
+      ```
+       docker rm -f postgres
+      ```
+   2. Remove postgres volume. It is usually a volume with the name `smart-exam-monitoring_postgres` but you can check it using 
+      ```bash
+       docker volume ls
+      ```
+      then
+       ```bash
+       docker volume rm smart-exam-monitoring_postgres
+      ```
+   3. Then recreate the container
+      ```bash
+      docker compose up postgres
+      ```
+      

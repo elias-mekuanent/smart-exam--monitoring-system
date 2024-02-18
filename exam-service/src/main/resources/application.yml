@@ -1,0 +1,19 @@
+server:
+  port: 8084
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+  application:
+    name: exam-service
+  security:
+    basic:
+      enabled: false
+
+springdoc:
+  api-docs:
+    path: /exam-service/v3/api-docs
+  swagger-ui:
+    path: /exam-service/swagger-ui.html
