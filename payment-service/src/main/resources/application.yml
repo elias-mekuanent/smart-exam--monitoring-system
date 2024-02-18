@@ -1,0 +1,23 @@
+server:
+  port: 8085
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+  application:
+    name: payment-service
+  security:
+    basic:
+      enabled: false
+app:
+  payment:
+    modalTitle: SEM Package
+    modalDescription: Start your first step by purchasing a package
+
+springdoc:
+  api-docs:
+    path: /payment-service/v3/api-docs
+  swagger-ui:
+    path: /payment-service/swagger-ui.html

@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: DEBUG
+spring:
+  datasource:
+    username: postgres
+    password:
+    url: jdbc:postgresql://localhost:5432/payment_service
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    generate-ddl: true
+chapa:
+  secrete-key: CHASECK_TEST-vmxIwBCgvqvt2fborZF8JZqKRIg99mCS
+  webhook:
+    secrete-key: AF270E66004D87D7B8CED57A47ED6B12D7E6738D02140542B17158065E870468
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
