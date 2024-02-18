@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+  application:
+    name: auth-service
+
+springdoc:
+  api-docs:
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    path: /auth-service/swagger-ui.html

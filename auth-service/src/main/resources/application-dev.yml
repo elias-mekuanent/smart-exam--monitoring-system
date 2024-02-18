@@ -1,0 +1,41 @@
+logging:
+  level:
+    root: DEBUG
+spring:
+  server:
+    error:
+      include-message: always
+      include-binding-errors: always
+  datasource:
+    username: yaphet
+    password: root
+    url: jdbc:postgresql://localhost:5432/auth_service
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    generate-ddl: true
+  kafka:
+    bootstrap-servers: localhost:9092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+app:
+  api-version: 1
+  base-url: 'http://localhost:8081/api/v${app.api-version}/auth-service'
+  front-end-url: 'http://localhost:3030'
+  token-expiration-delay: 30
+  jwt:
+    secrete: c6dbf890-d9b9-4f98-a3b0-e8909877531a
+    expiration-minutes:
+      access-token: 120
+      refresh-token: 1440
+  mail:
+    from: root@root.com
