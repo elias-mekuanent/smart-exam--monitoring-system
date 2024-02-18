@@ -1,0 +1,42 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+spring:
+  datasource:
+    url: jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1
+    driverClassName: org.hsqldb.jdbc.JDBCDriver
+    username: sa
+    password:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.HSQLDialect
+  mail:
+    host: localhost
+    port: 1025
+    username: root
+    password: root
+    properties:
+      mail:
+        smtp:
+          ssl.trust: '*'
+          auth: true
+          starttls.enable: 5000
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+app:
+  api-version: 1
+  base-url: 'http://localhost:${server.port}/api/v${app.api-version}'
+  token-expiration-delay: 30
+  mail:
+    from: root@root.com
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://locahost:8761/eureka

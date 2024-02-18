@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+  jpa:
+    hibernate:
+      show-sql: true
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_URL};
+
+sentry:
+  dsn: https://efca1a8038b74398be7d4dfa04720b74@o1356916.ingest.sentry.io/4505108545011712
+  traces-sample-rate: 1.0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}/eureka
+
+app:
+  api-version: 1
+  base-url: 'http://${HOST_NAME}:${BACKEND_PORT}/api/v${app.api-version}/auth-service'
+  front-end-url: 'http://${HOST_NAME}:${FRONTEND_PORT}'
+  token-expiration-delay: ${TOKEN_EXPIRATION_DELAY:30}
+  jwt:
+    secrete: ${JWT_TOKEN_SECRETE}
+    expiration-minutes:
+      access-token: ${ACCESS_TOKEN_EXPIRATION_MINUTES:120}
+      refresh-token: ${REFRESH_TOKEN_EXPIRATION_MINUTES:1140}
+  mail:
+    from: ${SYSTEM_EMAIL}
