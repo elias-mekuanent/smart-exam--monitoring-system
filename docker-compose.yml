@@ -1,0 +1,209 @@
+version: '3.7'
+services:
+  frontend:
+   container_name: frontend
+   build: frontend/
+   ports:
+     - "3030:3030"
+   networks:
+     - frontends
+  api-gateway:
+    container_name: api-gateway
+    build: api-gateway/
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      JWT_TOKEN_SECRETE: ${JWT_TOKEN_SECRETE}
+      HOST_NAME: ${HOST_NAME}
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_PORT: ${FRONTEND_PORT}
+    networks:
+      - backend
+      - frontends
+    depends_on:
+      - eureka-server
+  auth-service:
+    container_name: auth-service
+    build: auth-service/
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+      JWT_TOKEN_SECRETE: ${JWT_TOKEN_SECRETE}
+      HOST_NAME: ${HOST_NAME}
+      BACKEND_PORT: ${BACKEND_PORT}
+      FRONTEND_PORT: ${FRONTEND_PORT}
+      DB_URL: jdbc:postgresql://${DB_HOST}:${DB_PORT}/auth_service
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: auth_service
+      KAFKA_URL: ${KAFKA_URL}
+    networks:
+      - backend
+      - postgres
+      - frontends
+    depends_on:
+      - eureka-server
+  audio-processing-service:
+    container_name: audio-processing-service
+    build: audio-processing-service/
+    restart: always
+    ports:
+      - "8082:8082"
+#    expose:
+#      - "8082"
+    environment:
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+    networks:
+      - backend
+    depends_on:
+      - api-gateway
+      - kafka
+  email-service:
+    container_name: email-service
+    build: email-service/
+    restart: unless-stopped
+    expose:
+      - "8083"
+    environment:
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SYSTEM_EMAIL: ${SYSTEM_EMAIL}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      KAFKA_URL: ${KAFKA_URL}
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+    networks:
+      - backend
+    depends_on:
+      - api-gateway
+      - kafka
+  eureka-server:
+    container_name: eureka-server
+    build: eureka-server/
+    restart: always
+    ports:
+      - "8761:8761"
+#    expose:
+#      - "8761"
+    environment:
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+    networks:
+      - backend
+  exam-service:
+     container_name: exam-service
+     build: exam-service/
+     restart: unless-stopped
+     ports:
+       - "8084:8084"
+ #    expose:
+ #      - "8084"
+     environment:
+       ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+       DB_URL: jdbc:postgresql://${DB_HOST}:${DB_PORT}/exam_service
+       DB_USERNAME: ${DB_USERNAME}
+       DB_PASSWORD: ${DB_PASSWORD}
+       DB_HOST: ${DB_HOST}
+       DB_PORT: ${DB_PORT}
+       DB_NAME: exam_service
+       EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+     networks:
+       - backend
+       - postgres
+     depends_on:
+       - postgres
+       - api-gateway
+       - kafka
+  payment-service:
+    container_name: payment-service
+    build: payment-service/
+    restart: always
+    ports:
+      - "8085:8085"
+#    expose:
+#      - "8085"
+    environment:
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+      DB_URL: jdbc:postgresql://${DB_HOST}:${DB_PORT}/payment_service
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: payment_service
+      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
+    networks:
+      - backend
+      - postgres
+    depends_on:
+      - postgres
+      - api-gateway
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: exam_service, payment_service, auth_service
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    ports:
+      - "5432:5432"
+    #    expose:
+    #      - "5432" // this should be used for production instead of ports
+    networks:
+      - postgres
+  zookeeper:
+    container_name: zookeeper
+    image: bitnami/zookeeper:3.4.10
+    restart: unless-stopped
+    ports:
+      - "2181:2181"
+    #    expose:
+    #      - "2181" // this should be used for production instead of ports
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
+    networks:
+      - backend
+  kafka:
+    container_name: kafka
+    image: bitnami/kafka:3.3.1
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+#    expose:
+#      - "9092"
+#      - "9093"
+    environment:
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_LISTENERS: CLIENT://:9092,EXTERNAL://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: CLIENT
+    networks:
+      - backend
+    depends_on:
+      - zookeeper
+
+networks:
+  frontends:
+   driver: bridge
+  backend:
+    driver: bridge
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
