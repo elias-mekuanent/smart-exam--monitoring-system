@@ -1,0 +1,10 @@
+server:
+  port: 8086
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+  application:
+    name: notification-service
+  security:
+    basic:
+      enabled: false
