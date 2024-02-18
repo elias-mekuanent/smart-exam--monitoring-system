@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+  jpa:
+    hibernate:
+      show-sql: true
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+chapa:
+  secrete-key: CHASECK_TEST-vmxIwBCgvqvt2fborZF8JZqKRIg99mCS
+  webhook:
+    secrete-key: AF270E66004D87D7B8CED57A47ED6B12D7E6738D02140542B17158065E870468
+sentry:
+  dsn: https://efca1a8038b74398be7d4dfa04720b74@o1356916.ingest.sentry.io/4505108545011712
+  traces-sample-rate: 1.0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}/eureka
