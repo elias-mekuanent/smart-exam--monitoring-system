@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: DEBUG
+  org:
+    springframework:
+      cloud:
+        gateway:
+          route:
+            RouteDefinitionRouteLocator: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+services:
+  uri:
+    eureka-server: http://localhost:8761/
+
+app:
+  api-version: 1
+  base-url: 'http://localhost:8081'
+  jwt:
+    secrete: c6dbf890-d9b9-4f98-a3b0-e8909877531a
+    expiration-minutes:
+      access-token: 30
+      refresh-token: 60
