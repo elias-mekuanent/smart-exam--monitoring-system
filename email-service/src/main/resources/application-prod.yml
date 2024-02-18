@@ -1,0 +1,24 @@
+spring:
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SYSTEM_EMAIL}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          ssl.trust: '*'
+          auth: true
+          starttls.enable: true
+          starttls.required: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+        default-encoding: UTF-8
+        test-connection: false
+  kafka:
+    bootstrap-servers: ${KAFKA_URL}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}/eureka
