@@ -1,0 +1,13 @@
+server:
+  port: 8083
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+  application:
+    name: email-service
+app:
+  mail:
+    from: miniliktkursew@gmail.com

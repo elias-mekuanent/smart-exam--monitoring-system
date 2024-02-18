@@ -1,0 +1,25 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: miniliktkursew@gmail.com
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          ssl.trust: '*'
+          auth: true
+          starttls.enable: true
+          starttls.required: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+        default-encoding: UTF-8
+        test-connection: false
+        debug: true
+  kafka:
+    bootstrap-servers: localhost:9092
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
